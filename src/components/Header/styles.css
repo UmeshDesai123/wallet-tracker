@@ -1,0 +1,20 @@
+.navbar{
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 20px;
+  background-color: rgba(41, 112, 255, 1);
+  color: rgba(255, 255, 255, 1);
+  position: sticky;
+  align-items: center;
+  .logo{
+    font-weight: 500;
+    font-size: 20px;
+  }
+  .logout{
+    font-weight: 400;
+    &:hover{
+      cursor: pointer;
+      
+    }
+  }
+}

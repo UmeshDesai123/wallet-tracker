@@ -1,0 +1,10 @@
+.line{
+  /* box-shadow: var(--shadow); */
+  flex-grow: 1;
+  /* border: 2px solid blue; */
+  /* width: 50vw; */
+}
+
+.pie{
+  /* box-shadow: var(--shadow); */
+}

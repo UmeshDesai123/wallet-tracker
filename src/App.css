@@ -1,0 +1,19 @@
+
+.signup-container{
+  width: 100vw;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.charts{
+  margin: 20px;
+  /* border: 1px solid red; */
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 10px;
+  box-shadow: var(--shadow);
+}
+
