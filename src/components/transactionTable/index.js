@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import './styles.css';
-import { Table, Select, Radio } from 'antd';
+import { Table, Select, Radio, Popconfirm, Button } from 'antd';
 import { unparse, parse } from 'papaparse';
 import { toast } from 'react-toastify';
+import { db, auth } from '../../firebase';
+import { collection, deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-function TransactionTable({ transactions, addDocToDb, loading }) {
+function TransactionTable({ transactions, addDocToDb, loading, setTransactions }) {
+  const [user] = useAuthState(auth);
   const [serach, setSearch] = useState('');
   const [type, setType] = useState('');
   const [sortKey, setSortKey] = useState('');
@@ -31,7 +35,7 @@ function TransactionTable({ transactions, addDocToDb, loading }) {
       parse(e.target.files[0], {
         header: true,
         complete: async (results) => {
-          for(const doc of results.data){
+          for (const doc of results.data) {
             doc.amount = parseFloat(doc.amount);
             await addDocToDb(doc);
           }
@@ -43,6 +47,18 @@ function TransactionTable({ transactions, addDocToDb, loading }) {
     }
 
   };
+
+  const deleteRow = async (docId) => {
+    try {
+      console.log('delete', docId)
+      await deleteDoc(doc(db, `users/${user.uid}/transactions`, docId));
+      const newArray = transactions.filter((item) => item.docId !== docId);
+      setTransactions(newArray);
+      toast.success('Transaction Deleted!');
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const columns = [
     {
@@ -70,6 +86,24 @@ function TransactionTable({ transactions, addDocToDb, loading }) {
       dataIndex: 'date',
       key: 'date',
     },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      render: (_, record) => (
+        <a onClick={()=> deleteRow(record.docId)}>Delete</a>
+        // <Popconfirm
+        //   title="Delete the transaction"
+        //   description="Are you sure to delete this transaction?"
+        //   onConfirm={() => { deleteRow(record.docId) }}
+        //   // onCancel={cancel}
+        //   okText="Yes"
+        //   cancelText="No"
+        // >
+        //   <Button danger>Delete</Button>
+        // </Popconfirm>
+
+      ),
+    },
   ];
 
   const dataSource = transactions.filter((doc) => doc.title.toLowerCase().includes(serach.toLowerCase()) && (type === 'all' ? true : doc.type.includes(type)));
@@ -85,6 +119,7 @@ function TransactionTable({ transactions, addDocToDb, loading }) {
       return 0;
     }
   });
+
   return (
     <>
       <div className='search-bar'>
@@ -120,10 +155,10 @@ function TransactionTable({ transactions, addDocToDb, loading }) {
         <div className='csv'>
           <button onClick={exportToCSV} className='btn'>Export to CSV</button>
           <label htmlFor='csv-upload'>Upload CSV</label>
-          <input id='csv-upload' type='file' onChange={importCSV}/>
+          <input id='csv-upload' type='file' onChange={importCSV} />
         </div>
       </div>
-      <Table loading={loading} dataSource={sortedDataSource} columns={columns} />
+      <Table loading={loading} dataSource={sortedDataSource} columns={columns} rowKey="docId" />
     </>
   )
 }

@@ -8,12 +8,13 @@
 }
 
 .charts{
+  width: 100%;
   margin: 20px;
   /* border: 1px solid red; */
   display: flex;
   gap: 20px;
   justify-content: space-between;
   padding: 10px;
-  box-shadow: var(--shadow);
+  /* box-shadow: var(--shadow); */
 }
 

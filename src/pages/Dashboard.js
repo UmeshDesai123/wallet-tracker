@@ -11,6 +11,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import TransactionTable from '../components/transactionTable';
 import ChartComponent from '../components/charts';
 import PieChart from '../components/charts/pie-chart';
+import { Spin } from 'antd';
 
 function Dashboard() {
   const [user] = useAuthState(auth);
@@ -54,8 +55,8 @@ function Dashboard() {
   async function addDocToDb(data) {
     try {
       const docRef = await addDoc(collection(db, `users/${user.uid}/transactions`), data);
-      console.log('savedDoc', docRef);
-      setTransactions([...transactions, data]);
+      // console.log('savedDoc', docRef, docRef.id);
+      setTransactions([...transactions, {...data, docId: docRef.id}]);
     } catch (error) {
       console.log(error.message);
       toast.error('Failed to add transaction');
@@ -74,8 +75,10 @@ function Dashboard() {
         const querySnapshot = await getDocs(q);
         let transactionArray = [];
         querySnapshot.forEach((doc) => {
-          transactionArray.push(doc.data());
+          // console.log('docc', doc.id)
+          transactionArray.push({...doc.data(), docId: doc.id});
         });
+        // console.log('trans', transactionArray);
         setTransactions(transactionArray);
         toast.success('Transactions fetched');
       }
@@ -114,6 +117,8 @@ function Dashboard() {
     <>
       <Header></Header>
       <Cards
+        transactions={transactions}
+        setTransactions={setTransactions}
         openExpenseModal={openExpenseModal}
         openIncomeModal={openIncomeModal}
         income={income}
@@ -139,6 +144,7 @@ function Dashboard() {
       </div>
       <TransactionTable 
         transactions={transactions} 
+        setTransactions={setTransactions}
         addDocToDb={addDocToDb} 
         fetchDocs={fetchDocs}
         loading={loading}

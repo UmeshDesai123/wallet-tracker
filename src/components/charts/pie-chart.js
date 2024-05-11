@@ -2,7 +2,7 @@ import React from 'react';
 import { Pie } from '@ant-design/charts';
 import './styles.css';
 
-const PieChart = ({ transactions }) => {
+const PieChart = ({ transactions, loading }) => {
   const mapd = {}
   for(const doc of transactions ?? []){
     if(doc?.type === 'expense'){
@@ -17,7 +17,7 @@ const PieChart = ({ transactions }) => {
     type: key,
     value: mapd[key],
   }));
-  console.log(data);
+  // console.log(data);
 
   const data1 = [
     { type: 'Category 1', value: 27 },
@@ -31,7 +31,7 @@ const PieChart = ({ transactions }) => {
     // appendPadding: 10,
     
     data: data,
-    width: 500,
+    width: 400,
     angleField: 'value',
     colorField: 'type',
     // radius: 0.8,

@@ -2,7 +2,7 @@ import React from 'react';
 import { Line } from '@ant-design/charts';
 import './styles.css';
 
-function ChartComponent({ transactions }) {
+function ChartComponent({ transactions, loading }) {
   let currentBal = 0;
   const data = transactions.map((doc) => {
     if (doc.type === 'income') {
@@ -19,7 +19,7 @@ function ChartComponent({ transactions }) {
 
   const config = {
     data,
-    with: 1700,
+    with: 1200,
     xField: 'date',
     yField: 'Current Balance',
   };
